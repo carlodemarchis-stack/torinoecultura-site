@@ -223,8 +223,7 @@ p a{text-decoration:underline;text-underline-offset:3px}
 .article-body a{text-decoration:underline;text-underline-offset:3px}
 .article-body blockquote{margin:1.4em 0;padding-left:18px;border-left:3px solid #000;font-style:italic}
 .article-body ul,.article-body ol{padding-left:1.3em}
-.hero-social{display:flex;flex-wrap:wrap;gap:18px;margin:0 0 26px}
+.hero-social{display:flex;flex-wrap:wrap;gap:18px;margin:0 0 30px}
 .hero-social a{color:#fff;opacity:.8;display:inline-flex}
 .hero-social a:hover{opacity:1}
 .hero-social svg{width:24px;height:24px;display:block}
-.hero-cta{margin:0 0 28px}

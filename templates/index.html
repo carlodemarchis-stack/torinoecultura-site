@@ -12,7 +12,6 @@
       <div class="hero-social" aria-label="Dove trovarci">
         {% for key, label in [('instagram','Instagram'),('youtube','YouTube'),('spotify','Spotify'),('substack','Substack'),('linkedin','LinkedIn')] %}{% if site[key] %}<a href="{{ site[key] }}" rel="me noopener" aria-label="{{ label }}" title="{{ label }}">{{ ico[key]() }}</a>{% endif %}{% endfor %}
       </div>
-      <p class="hero-cta"><a class="btn-light" href="{{ site.instagram }}" rel="me noopener">Seguici su Instagram ↗</a></p>
       <div class="hero-nums"><a href="/episodi/"><b>{{ episodes|length }}</b> episodi</a><a href="/episodi/"><b>{{ categories|length }}</b> categorie</a>{% if articles %}<a href="/articoli/"><b>{{ articles|length }}</b> articoli</a>{% endif %}</div>
     </div>
     <a class="hero-feat" href="{{ top.url }}">
