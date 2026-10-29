@@ -143,6 +143,23 @@ p a{text-decoration:underline;text-underline-offset:3px}
 .about-teaser .btn{margin:6px 8px 0 0}
 @media (max-width:760px){.about-grid{grid-template-columns:1fr}.about-img{order:-1}}
 
+/* carlodemarchis band (above the footer) */
+.art{background:var(--soft);border-top:1px solid var(--line);padding:clamp(36px,6vw,72px) var(--gut)}
+.art-in{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:minmax(160px,300px) 1fr;gap:clamp(24px,5vw,72px);align-items:center}
+.art-img img{width:100%;height:auto;aspect-ratio:1;object-fit:cover;filter:grayscale(1)}
+.art-mark{display:block;margin-bottom:14px}
+.art-name{display:block;font-weight:700;letter-spacing:-.04em;font-size:clamp(30px,4vw,48px);line-height:1}
+.art-tag{display:block;font-size:14px;color:var(--mute);margin-top:4px}
+.art-text p{font-size:clamp(16px,1.6vw,19px);color:#222;max-width:52ch;margin:0 0 20px;line-height:1.45}
+.art-sm{padding:28px var(--gut)}
+.art-sm .art-in{grid-template-columns:minmax(90px,120px) 1fr;gap:clamp(18px,3vw,36px)}
+.art-sm .art-text{display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px}
+.art-sm .art-mark{margin:0}
+.art-sm .art-name{font-size:24px}
+.art-sm .art-text p{font-size:15px;margin:0;color:#444;flex:1 1 260px}
+.art-sm .btn{font-size:13px;padding:8px 14px}
+@media (max-width:700px){.art-in{grid-template-columns:1fr}.art-img{max-width:240px}.art-sm .art-in{grid-template-columns:1fr}.art-sm .art-img{max-width:96px}}
+
 /* footer */
 .foot{background:#000;color:#fff;padding:48px var(--gut) 56px;margin-top:40px}
 .foot-grid{max-width:var(--max);margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;gap:28px;align-items:start}

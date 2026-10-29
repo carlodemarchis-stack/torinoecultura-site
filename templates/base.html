@@ -21,7 +21,7 @@
 <link rel="icon" href="/icon-512.png" sizes="512x512" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#000000">
-<link rel="stylesheet" href="/style.css?v=2">
+<link rel="stylesheet" href="/style.css?v=3">
 {% if site.umami_website_id %}
 <!-- Umami -->
 <script>if((location.search+location.hash).indexOf('noumami')>-1){try{localStorage.setItem('umami.disabled','1')}catch(e){}}</script>
@@ -42,6 +42,18 @@
 <main id="main">
 {% block content %}{% endblock %}
 </main>
+{% if site.art_promo and site.art_promo.url %}
+<section class="art{% if page != 'home' %} art-sm{% endif %}">
+  <div class="art-in">
+    <a class="art-img" href="{{ site.art_promo.url }}" rel="noopener"><img src="/art-portrait.webp" width="640" height="427" alt="{{ site.author }}" loading="lazy" decoding="async"></a>
+    <div class="art-text">
+      <a class="art-mark" href="{{ site.art_promo.url }}" rel="noopener"><span class="art-name">{{ site.art_promo.name }}</span><span class="art-tag">{{ site.art_promo.tagline }}</span></a>
+      <p>{{ site.art_promo.blurb }}</p>
+      <a class="btn" href="{{ site.art_promo.url }}" rel="noopener">{{ site.art_promo.cta }} ↗</a>
+    </div>
+  </div>
+</section>
+{% endif %}
 <footer class="foot">
   <div class="foot-grid">
     <div class="foot-brand"><img src="/logo-wide.webp" width="1200" height="331" alt="{{ site.site_name }}" loading="lazy"><span class="tag">{{ site.tagline }}</span></div>
