@@ -1,40 +1,45 @@
 {% extends "base.html" %}
 {% from "_card.html" import episode_card, article_card %}
 {% block content %}
+{% set top = latest[0] %}
 <section class="hero">
-  <div class="hero-in">
-    <h1 class="hero-logo"><img src="/logo-wide.webp" width="1200" height="331" alt="{{ site.site_name }}" loading="eager" fetchpriority="high" decoding="async"></h1>
-    <p class="hero-tag">{{ site.tagline }}</p>
-    <p class="hero-sub">Dal 2024, un episodio alla settimana: la persona, la professione, la scena a Torino. Su Instagram, YouTube, Spotify, Substack e LinkedIn.</p>
-    <p class="hero-cta"><a class="btn-light" href="{{ site.instagram }}" rel="me noopener">Seguici su Instagram ↗</a></p>
-    <div class="hero-nums"><a href="/episodi/"><b>{{ episodes|length }}</b> episodi</a><a href="/episodi/"><b>{{ categories|length }}</b> categorie</a></div>
+  <div class="hero-in hero-grid">
+    <div class="hero-text">
+      <h1 class="hero-logo"><img src="/logo-wide.webp" width="1200" height="331" alt="{{ site.site_name }}" loading="eager" fetchpriority="high" decoding="async"></h1>
+      <p class="hero-tag">{{ site.tagline }}</p>
+      <p class="hero-sub">Dal 2024, un episodio alla settimana: la persona, la professione, la scena a Torino. Su Instagram, YouTube, Spotify, Substack e LinkedIn.</p>
+      <p class="hero-cta"><a class="btn-light" href="{{ site.instagram }}" rel="me noopener">Seguici su Instagram ↗</a></p>
+      <div class="hero-nums"><a href="/episodi/"><b>{{ episodes|length }}</b> episodi</a><a href="/episodi/"><b>{{ categories|length }}</b> categorie</a>{% if articles %}<a href="/articoli/"><b>{{ articles|length }}</b> articoli</a>{% endif %}</div>
+    </div>
+    <a class="hero-feat" href="{{ top.url }}">
+      {% if top.image_img %}{{ img(top.image_img, '(max-width:900px) 100vw, 58vw', top.title, eager=True) }}{% endif %}
+      <span class="hero-feat-text"><span class="hero-feat-k">Ultimo episodio · Ep. {{ top.episode }}{% if top.cat %} · {{ top.cat.label }}{% endif %}</span><span class="hero-feat-t">{{ top.title }}</span></span>
+    </a>
   </div>
 </section>
 
 <section class="section">
   <div class="section-head"><h2>Ultimi episodi</h2><a class="more" href="/episodi/">Tutti gli episodi</a></div>
   <div class="egrid">
-    {% for e in latest %}{{ episode_card(e, eager=loop.index <= 3) }}{% endfor %}
+    {% for e in latest[1:7] %}{{ episode_card(e, eager=loop.index <= 3) }}{% endfor %}
   </div>
 </section>
 
 <section class="section section-dark">
   <div class="section-head"><h2>Categorie</h2><span class="count">{{ categories|length }}</span></div>
-  <div class="cgrid">
-    {% for c in categories %}
-    <a class="ccard" href="/episodi/#{{ c.slug }}">
-      {% if c.cover.image_img %}{{ img(c.cover.image_img, '(max-width:640px) 50vw, (max-width:1100px) 33vw, 300px', c.label) }}{% endif %}
-      <span class="ccard-t">{{ c.label }}</span><span class="ccard-m">{{ c.count }} {{ 'episodio' if c.count == 1 else 'episodi' }}</span>
-    </a>
-    {% endfor %}
-  </div>
+  <ul class="catlist">
+    {% for c in categories %}<li><a href="/episodi/#{{ c.slug }}"><span>{{ c.label }}</span><b>{{ c.count }}</b></a></li>{% endfor %}
+  </ul>
 </section>
 
 {% if articles %}
 <section class="section">
   <div class="section-head"><h2>Ultimi articoli</h2><a class="more" href="/articoli/">Tutti gli articoli</a></div>
-  <div class="agrid">
-    {% for a in articles[:3] %}{{ article_card(a) }}{% endfor %}
+  <div class="agrid home">
+    {{ article_card(articles[0], '(max-width:900px) 100vw, 60vw') }}
+    <div class="astack">
+      {% for a in articles[1:4] %}{{ article_card(a, '(max-width:900px) 100vw, 160px') }}{% endfor %}
+    </div>
   </div>
 </section>
 {% endif %}

@@ -367,7 +367,7 @@ def main():
     base = SITE.get("base_url", "").rstrip("/")
     ctx = dict(site=SITE, base=base, episodes=episodes, categories=categories, articles=articles,
                project=data["project"], presentation=presentation, year=date.today().year,
-               latest=[e for e in episodes if e["episode"] > 0][:6])
+               latest=[e for e in episodes if e["episode"] > 0][:7])
 
     def render(tpl, out, **kw):
         path = os.path.join(DOCS, out)
