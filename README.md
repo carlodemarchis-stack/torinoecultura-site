@@ -12,6 +12,7 @@ this repo only reads them and renders pages.
 torinoecultura-site/
 ├── build.py        renders docs/ with jinja2 + resizes images with Pillow into WebP
 ├── site.json       settings: data folder, base URL / domain, Umami id, social links, category labels
+├── tools/publish.py          Substack refresh → build → commit → push (the "Publish site" button of tec_ui)
 ├── tools/fetch_substack.py   refreshes the local cache of the Substack articles (see below)
 ├── templates/      base, index, episodes, episode, articles, article, about, 404, _card (jinja2)
 ├── static/         style.css, site.js, logo, icons, og-default.jpg → copied into docs/
@@ -22,15 +23,17 @@ torinoecultura-site/
 
 1. Edit episodes / people in `tec_ui.py` (the data project). Only episodes with
    status `Published` are rendered; `candidates` are never read.
-2. Build and push:
+2. Press **⬆ Publish site** in `tec_ui` (it POSTs `/publish`, which runs
+   `tools/publish.py` here: Substack refresh → build → commit → push, and shows the
+   log). The same from the shell:
 
 ```bash
-python3 build.py
+python3 tools/publish.py
 ```
 
-```bash
-git add -A && git commit -m "content: …" && git push
-```
+`tec_ui.py` finds this folder as `../torinoecultura-site`; set `TEC_SITE_DIR` if it
+moves. Step by step, the equivalent is `python3 build.py` then
+`git add -A && git commit -m "content: …" && git push`.
 
 `build.py` reads `<data_dir>/data/torino_e_cultura.json` and
 `<data_dir>/data/photos/{episodes,people}/` (`data_dir` is in `site.json`, or pass
