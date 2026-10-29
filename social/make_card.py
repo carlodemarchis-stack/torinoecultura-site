@@ -31,18 +31,17 @@ html,body{margin:0;background:#000;color:#fff;font-family:"Helvetica Neue",Helve
 .tag{font-weight:700;font-size:{{ (w*0.064)|int }}px;line-height:1.1;letter-spacing:-.03em;margin:0;text-wrap:balance}
 .url{display:inline-block;background:#fff;color:#000;font-weight:700;font-size:{{ (w*0.078)|int }}px;letter-spacing:-.035em;line-height:1;padding:{{ (w*0.03)|int }}px {{ (w*0.045)|int }}px;align-self:flex-start}
 .url small{display:block;font-size:{{ (w*0.024)|int }}px;letter-spacing:.14em;text-transform:uppercase;font-weight:500;margin-bottom:{{ (w*0.014)|int }}px}
-.social{display:flex;gap:{{ (w*0.05)|int }}px;align-items:center}
-.social span{display:inline-flex}
-.social svg{width:{{ (w*0.07)|int }}px;height:{{ (w*0.07)|int }}px;display:block}
-.handle{font-size:{{ (w*0.034)|int }}px;font-weight:600;color:#fff;margin:{{ (w*0.035)|int }}px 0 0;letter-spacing:-.01em}
-.handle small{display:block;font-size:{{ (w*0.024)|int }}px;color:#999;font-weight:500;letter-spacing:.12em;text-transform:uppercase;margin-top:{{ (w*0.01)|int }}px}
+.social{display:flex;gap:{{ (w*0.045)|int }}px;align-items:flex-start}
+.social span{display:flex;flex-direction:column;align-items:center;gap:{{ (w*0.014)|int }}px;font-size:{{ (w*0.019)|int }}px;letter-spacing:.1em;text-transform:uppercase;color:#bbb;font-weight:500}
+.social svg{width:{{ (w*0.068)|int }}px;height:{{ (w*0.068)|int }}px;display:block;color:#fff}
+.handle{font-size:{{ (w*0.036)|int }}px;font-weight:700;color:#fff;margin:{{ (w*0.04)|int }}px 0 0;letter-spacing:-.02em}
 </style></head><body><div class="card">
 <img class="logo" src="file://{{ logo }}" alt="Torino e Cultura">
 <p class="tag">{{ tagline }}</p>
 <a class="url"><small>Il nuovo sito</small>{{ domain }}</a>
 <div>
-<div class="social">{% for k, label in socials %}<span title="{{ label }}">{{ ico[k]() }}</span>{% endfor %}</div>
-<p class="handle">@torinoecultura<small>Instagram · YouTube · Spotify · Substack · LinkedIn</small></p>
+<div class="social">{% for k, label in socials %}<span>{{ ico[k]() }}{{ label }}</span>{% endfor %}</div>
+<p class="handle">@torinoecultura</p>
 </div>
 </div></body></html>"""
 
