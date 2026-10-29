@@ -1,0 +1,14 @@
+{# episode card: used on home and the episodes list #}
+{% macro episode_card(e, sizes='(max-width:640px) 100vw, (max-width:1100px) 50vw, 420px', eager=False) %}
+<article class="ecard" data-cat="{{ e.cat.slug if e.cat else '' }}">
+  <a class="ecard-img" href="{{ e.url }}" aria-label="{{ e.title }}">
+    {% if e.image_img %}{{ img(e.image_img, sizes, e.title, eager=eager) }}{% else %}<span class="noimg"></span>{% endif %}
+  </a>
+  <div class="ecard-text">
+    <div class="meta"><span class="num">{% if e.episode %}Ep. {{ e.episode }}{% else %}Intro{% endif %}</span>{% if e.cat %}<a class="cat" href="/episodi/#{{ e.cat.slug }}">{{ e.cat.label }}</a>{% endif %}</div>
+    <h3><a href="{{ e.url }}">{{ e.title }}</a></h3>
+    {% if e.guest_names %}<p class="guests">{{ e.guest_names }}</p>{% endif %}
+  </div>
+</article>
+{% endmacro %}
+

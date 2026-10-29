@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Il progetto — {{ site.site_name }}{% endblock %}
+{% block desc %}{{ project.about|excerpt }}{% endblock %}
+{% block canon %}{{ base }}/progetto/{% endblock %}
+{% block content %}
+<section class="section about">
+  <div class="about-grid">
+    <div class="about-text">
+      <h1 class="h-page">Il progetto</h1>
+      <p class="tagline-big">{{ site.tagline }}</p>
+      <div class="statement">{{ project.about.split('Dove si trova Torino e Cultura')[0]|paragraphs }}</div>
+      <h2 class="h-group">Dove trovare Torino e Cultura</h2>
+      <div class="elinks">
+        {% if site.youtube %}<a class="btn" href="{{ site.youtube }}" rel="me noopener">YouTube ↗</a>{% endif %}
+        {% if site.spotify %}<a class="btn" href="{{ site.spotify }}" rel="me noopener">Spotify ↗</a>{% endif %}
+        {% if site.instagram %}<a class="btn ghost" href="{{ site.instagram }}" rel="me noopener">Instagram ↗</a>{% endif %}
+        {% if site.substack %}<a class="btn ghost" href="{{ site.substack }}" rel="me noopener">Substack ↗</a>{% endif %}
+        {% if site.linkedin %}<a class="btn ghost" href="{{ site.linkedin }}" rel="me noopener">LinkedIn ↗</a>{% endif %}
+      </div>
+    </div>
+    <div class="about-side">
+      {% if presentation and presentation.image_img %}
+      <a class="about-img" href="{{ presentation.url }}">{{ img(presentation.image_img, '(max-width:760px) 100vw, 45vw', presentation.title, eager=True) }}<span class="more">Guarda la presentazione</span></a>
+      {% endif %}
+      <p class="muted small">Un progetto di <a href="https://art.carlodemarchis.it/" rel="noopener">{{ site.author }}</a>, dal febbraio 2024.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

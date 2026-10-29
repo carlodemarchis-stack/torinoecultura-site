@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% from "_card.html" import episode_card %}
+{% block title %}Episodi — {{ site.site_name }}{% endblock %}
+{% block desc %}Tutti gli episodi di {{ site.site_name }}: {{ episodes|length }} video interviste ai protagonisti della scena culturale torinese, per categoria.{% endblock %}
+{% block canon %}{{ base }}/episodi/{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-head"><h1>Episodi</h1><span class="count" id="ep-count">{{ episodes|length }}</span></div>
+  <div class="filters" id="filters" role="group" aria-label="Filtra per categoria">
+    <a href="#" data-cat="" aria-pressed="true">Tutti</a>
+    {% for c in categories %}<a href="#{{ c.slug }}" data-cat="{{ c.slug }}" aria-pressed="false">{{ c.label }} <small>{{ c.count }}</small></a>{% endfor %}
+  </div>
+  <div class="egrid" id="episodes">
+    {% for e in episodes %}{{ episode_card(e, eager=loop.index <= 3) }}{% endfor %}
+  </div>
+</section>
+{% endblock %}

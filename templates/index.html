@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "_card.html" import episode_card %}
+{% block content %}
+<section class="hero">
+  <div class="hero-in">
+    <h1 class="hero-logo"><img src="/logo-wide.webp" width="1200" height="331" alt="{{ site.site_name }}" loading="eager" fetchpriority="high" decoding="async"></h1>
+    <p class="hero-tag">{{ site.tagline }}</p>
+    <p class="hero-sub">Dal 2024, un episodio alla settimana: la persona, la professione, la scena a Torino. Su YouTube, Spotify, LinkedIn, Substack e Instagram.</p>
+    <div class="hero-nums"><a href="/episodi/"><b>{{ episodes|length }}</b> episodi</a><a href="/episodi/"><b>{{ categories|length }}</b> categorie</a></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Ultimi episodi</h2><a class="more" href="/episodi/">Tutti gli episodi</a></div>
+  <div class="egrid">
+    {% for e in latest %}{{ episode_card(e, eager=loop.index <= 3) }}{% endfor %}
+  </div>
+</section>
+
+<section class="section section-dark">
+  <div class="section-head"><h2>Categorie</h2><span class="count">{{ categories|length }}</span></div>
+  <div class="cgrid">
+    {% for c in categories %}
+    <a class="ccard" href="/episodi/#{{ c.slug }}">
+      {% if c.cover.image_img %}{{ img(c.cover.image_img, '(max-width:640px) 50vw, (max-width:1100px) 33vw, 300px', c.label) }}{% endif %}
+      <span class="ccard-t">{{ c.label }}</span><span class="ccard-m">{{ c.count }} {{ 'episodio' if c.count == 1 else 'episodi' }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+
+<section class="section about-teaser">
+  <div class="about-grid">
+    <div>
+      <h2 class="h-page">Il progetto</h2>
+      <p class="lead">{{ project.about.split('\n\n')[0] }}</p>
+      <a class="btn" href="/progetto/">Leggi di più</a>
+      {% if presentation %}<a class="btn ghost" href="{{ presentation.url }}">Guarda la presentazione</a>{% endif %}
+    </div>
+    {% if presentation and presentation.image_img %}
+    <a class="about-img" href="{{ presentation.url }}">{{ img(presentation.image_img, '(max-width:760px) 100vw, 45vw', presentation.title) }}</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

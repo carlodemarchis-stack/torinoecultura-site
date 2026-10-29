@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% from "_card.html" import episode_card %}
+{% block title %}{{ ep.title }} — {{ site.site_name }}{% endblock %}
+{% block desc %}{{ ep.excerpt or ep.title }}{% endblock %}
+{% block canon %}{{ base }}{{ ep.url }}{% endblock %}
+{% block ogtype %}video.other{% endblock %}
+{% block og %}{% if ep.image_img %}<meta property="og:image" content="{{ base }}{{ ep.image_img.og }}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="{{ (1200 * ep.image_img.h / ep.image_img.w)|round|int }}">{% else %}{{ super() }}{% endif %}{% endblock %}
+{% block content %}
+<article class="episode">
+  <header class="ehead">
+    <div class="meta">
+      <a href="/episodi/">Episodi</a>
+      <span class="num">{% if ep.episode %}Ep. {{ ep.episode }}{% else %}Introduzione{% endif %}</span>
+      {% if ep.cat %}<a class="cat" href="/episodi/#{{ ep.cat.slug }}">{{ ep.cat.label }}</a>{% endif %}
+      {% for t in ep.tag_cats %}<a class="cat" href="/episodi/#{{ t.slug }}">{{ t.label }}</a>{% endfor %}
+    </div>
+    <h1 class="h-title">{{ ep.title }}</h1>
+  </header>
+
+  <figure class="ehero{% if ep.yt_id %} has-video{% endif %}" {% if ep.yt_id %}data-yt="{{ ep.yt_id }}"{% endif %}>
+    {% if ep.yt_id %}
+    <button class="play" type="button" aria-label="Guarda su YouTube: {{ ep.title }}">
+      {% if ep.image_img %}{{ img(ep.image_img, '100vw', ep.title, eager=True, full=True) }}{% endif %}
+      <span class="play-btn" aria-hidden="true"><svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7c-.8-2.9-3-5.1-5.9-5.9C55.4.4 34 .4 34 .4S12.6.4 7.4 1.8c-2.9.8-5.1 3-5.9 5.9C0 13 0 24 0 24s0 11 1.5 16.3c.8 2.9 3 5.1 5.9 5.9C12.6 47.6 34 47.6 34 47.6s21.4 0 26.6-1.4c2.9-.8 5.1-3 5.9-5.9C68 35 68 24 68 24s0-11-1.5-16.3z" fill="#f00"/><path d="M27 34.6V13.4L45 24z" fill="#fff"/></svg></span>
+    </button>
+    {% elif ep.image_img %}
+    <a href="{{ ep.image_img.url }}" data-lightbox="ep">{{ img(ep.image_img, '100vw', ep.title, eager=True, full=True) }}</a>
+    {% endif %}
+  </figure>
+
+  <div class="ebody">
+    <div class="einfo">
+      {% if ep.info %}<div class="statement">{{ ep.info|paragraphs }}</div>{% endif %}
+      <div class="elinks">
+        {% if ep.yt_id %}<a class="btn" href="{{ ep.youtube }}" rel="noopener">YouTube ↗</a>{% endif %}
+        {% if ep.spotify %}<a class="btn" href="{{ ep.spotify }}" rel="noopener">Spotify ↗</a>{% endif %}
+        {% if ep.linkedin %}<a class="btn ghost" href="{{ ep.linkedin }}" rel="noopener">LinkedIn ↗</a>{% endif %}
+        {% if ep.substack %}<a class="btn ghost" href="{{ ep.substack }}" rel="noopener">Substack ↗</a>{% endif %}
+        {% for r in ep.reels %}<a class="btn ghost" href="{{ r }}" rel="noopener">Reel {{ loop.index }} ↗</a>{% endfor %}
+      </div>
+    </div>
+    <aside class="eside">
+      {% if ep.guest_list %}
+      <h2 class="side-h">{{ 'Ospite' if ep.guest_list|length == 1 else 'Ospiti' }}</h2>
+      {% for g in ep.guest_list %}
+      {% set p = g.person %}
+      <div class="guest">
+        {% if p and p.photo_img %}<a href="{{ p.photo_img.url }}" data-lightbox="guest">{{ img(p.photo_img, '(max-width:860px) 100vw, 400px', g.name) }}</a>{% endif %}
+        <span class="guest-n">{{ g.name }}</span>
+        {% if p and p.cat %}<span class="guest-m">{{ p.cat.label }}</span>{% endif %}
+        {% if p and (p.bio or p.info) %}<div class="guest-bio">{{ (p.bio or p.info)|paragraphs }}</div>{% endif %}
+        {% set link = (p.link if p and p.link else (ep.link if ep.guest_list|length == 1 else '')) %}
+        {% if link %}<a class="side-link" href="{{ link }}" rel="noopener">{{ link_label(link) }} di {{ g.name.split(' ')[0] }} ↗</a>{% endif %}
+        {% set others = p.episodes|rejectattr('episode', 'equalto', ep.episode)|list if p else [] %}
+        {% if others %}<ul class="guest-eps">{% for o in others %}<li><a href="{{ o.url }}">{{ o.title }}</a></li>{% endfor %}</ul>{% endif %}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% if ep.location %}
+      <h2 class="side-h">Luogo</h2>
+      <p class="side-p">{% if ep.location_link %}<a href="{{ ep.location_link }}" rel="noopener">{{ ep.location }} ↗</a>{% else %}{{ ep.location }}{% endif %}</p>
+      {% endif %}
+    </aside>
+  </div>
+
+  <nav class="pnav" aria-label="Altri episodi">
+    {% if older %}<a class="pn prev" href="{{ older.url }}"><span>Episodio precedente</span>{{ older.title }}</a>{% else %}<span></span>{% endif %}
+    {% if newer %}<a class="pn next" href="{{ newer.url }}"><span>Episodio successivo</span>{{ newer.title }}</a>{% endif %}
+  </nav>
+</article>
+{% endblock %}
