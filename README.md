@@ -92,3 +92,7 @@ the live site in something that runs JavaScript so the visit is not counted.
 
 macOS system `python3` with `jinja2` and `Pillow` (`pip3 install --user pillow`
 otherwise). No node, no build tool.
+
+## Social cards
+
+`python3 social/make_card.py` renders `social/card-1012x1350.png` (logo, tagline, URL, social icons, no photos) with headless Chrome; `--size WxH` and `--tagline "…"` override the defaults. The last render is committed next to the script.
