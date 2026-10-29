@@ -11,9 +11,9 @@
       <div class="statement">{{ project.about.split('Dove si trova Torino e Cultura')[0]|paragraphs }}</div>
       <h2 class="h-group">Dove trovare Torino e Cultura</h2>
       <div class="elinks">
+        {% if site.instagram %}<a class="btn" href="{{ site.instagram }}" rel="me noopener">Instagram ↗</a>{% endif %}
         {% if site.youtube %}<a class="btn" href="{{ site.youtube }}" rel="me noopener">YouTube ↗</a>{% endif %}
-        {% if site.spotify %}<a class="btn" href="{{ site.spotify }}" rel="me noopener">Spotify ↗</a>{% endif %}
-        {% if site.instagram %}<a class="btn ghost" href="{{ site.instagram }}" rel="me noopener">Instagram ↗</a>{% endif %}
+        {% if site.spotify %}<a class="btn ghost" href="{{ site.spotify }}" rel="me noopener">Spotify ↗</a>{% endif %}
         {% if site.substack %}<a class="btn ghost" href="{{ site.substack }}" rel="me noopener">Substack ↗</a>{% endif %}
         {% if site.linkedin %}<a class="btn ghost" href="{{ site.linkedin }}" rel="me noopener">LinkedIn ↗</a>{% endif %}
       </div>

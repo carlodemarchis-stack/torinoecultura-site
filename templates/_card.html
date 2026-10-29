@@ -12,3 +12,16 @@
 </article>
 {% endmacro %}
 
+
+{% macro article_card(a, sizes='(max-width:640px) 100vw, (max-width:1100px) 50vw, 420px') %}
+<article class="acard">
+  <a class="acard-img" href="{{ a.url }}" aria-label="{{ a.title }}">
+    {% if a.cover_img %}{{ img(a.cover_img, sizes, a.title) }}{% else %}<span class="noimg"></span>{% endif %}
+  </a>
+  <div class="acard-text">
+    <div class="meta"><span class="num">{{ a.date }}</span>{% if a.episode %}<a class="cat" href="{{ a.episode.url }}">Ep. {{ a.episode.episode }}</a>{% endif %}</div>
+    <h3><a href="{{ a.url }}">{{ a.title }}</a></h3>
+    {% if a.subtitle %}<p class="guests">{{ a.subtitle }}</p>{% endif %}
+  </div>
+</article>
+{% endmacro %}

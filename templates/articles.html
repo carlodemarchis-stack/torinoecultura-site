@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "_card.html" import article_card %}
+{% block title %}Articoli — {{ site.site_name }}{% endblock %}
+{% block desc %}Gli articoli di {{ site.site_name }} su Substack: {{ articles|length }} pezzi su mostre, fiere, concerti e persone della scena culturale torinese.{% endblock %}
+{% block canon %}{{ base }}/articoli/{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="section-head"><h1>Articoli</h1><span class="count">{{ articles|length }}</span><a class="more" href="{{ site.substack }}" rel="me noopener">Iscriviti su Substack ↗</a></div>
+  <div class="agrid">
+    {% for a in articles %}{{ article_card(a) }}{% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -18,6 +18,7 @@ import re
 import shutil
 import sys
 import unicodedata
+from html.parser import HTMLParser
 from datetime import date
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -153,6 +154,87 @@ def excerpt(text, n=160):
     return t if len(t) <= n else t[:n].rsplit(" ", 1)[0] + "…"
 
 
+MESI = ["", "gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
+
+
+def it_date(iso):
+    try:
+        y, m, d = (iso or "")[:10].split("-")
+        return f"{int(d)} {MESI[int(m)]} {y}"
+    except (ValueError, IndexError):
+        return ""
+
+
+class BodyCleaner(HTMLParser):
+    """Substack body_html -> plain editorial HTML: keeps text tags and images, drops widgets (buttons, forms,
+    svg icons, iframes: the episode page has its own player), unwraps the layout divs."""
+    KEEP = {"p", "strong", "em", "b", "i", "br", "h1", "h2", "h3", "h4", "h5", "hr", "a", "ul", "ol", "li",
+            "blockquote", "figure", "figcaption", "img", "pre", "code", "span"}
+    DROP = {"button", "svg", "form", "iframe", "input", "label", "script", "style", "select", "textarea"}
+    ATTRS = {"a": ("href",), "img": ("src", "alt", "width", "height")}
+    VOID = {"br", "hr", "img", "source", "input", "meta", "link", "wbr"}
+
+    def __init__(self):
+        super().__init__(convert_charrefs=False)
+        self.out, self.skip = [], 0          # skip = depth inside a dropped element
+
+    def handle_starttag(self, tag, attrs):
+        if self.skip or tag in self.DROP:
+            if tag not in self.VOID:
+                self.skip += 1
+            return
+        if tag not in self.KEEP:
+            return                                    # div / picture / section: unwrap
+        attrs = dict(attrs)
+        keep = {k: attrs[k] for k in self.ATTRS.get(tag, ()) if attrs.get(k)}
+        if tag == "a" and "image-link" in (attrs.get("class") or ""):
+            keep["data-lightbox"] = "article"
+        if tag == "a" and keep.get("href", "").startswith("http"):
+            keep["rel"] = "noopener"
+        self.out.append("<" + tag + "".join(f' {k}="{html.escape(v, quote=True)}"' for k, v in keep.items()) + ">")
+
+    def handle_startendtag(self, tag, attrs):        # <path/> and friends: no end tag, so no depth change
+        if not (self.skip or tag in self.DROP):
+            self.handle_starttag(tag, attrs)
+
+    def handle_endtag(self, tag):
+        if self.skip:
+            if tag not in self.VOID:
+                self.skip -= 1
+            return
+        if tag in self.KEEP and tag not in self.VOID:
+            self.out.append(f"</{tag}>")
+
+    def handle_data(self, d):
+        if not self.skip:
+            self.out.append(d)
+
+    def handle_entityref(self, name):
+        if not self.skip:
+            self.out.append(f"&{name};")
+
+    def handle_charref(self, name):
+        if not self.skip:
+            self.out.append(f"&#{name};")
+
+
+IMG_NAME = re.compile(r"images(?:/|%2F)([^/%\s\"?]+)")
+
+
+def clean_body(body, cover=None):
+    c = BodyCleaner()
+    c.feed(body or "")
+    out = re.sub(r"<p>\s*</p>", "", "".join(c.out)).strip()
+    # Substack posts usually open with the cover image itself: the page already shows it above the title
+    m = re.match(r"<figure>.*?</figure>", out, re.S)
+    if m and cover:
+        first = IMG_NAME.search(m.group())
+        mine = IMG_NAME.search(cover)
+        if first and mine and first.group(1) == mine.group(1):
+            out = out[m.end():].strip()
+    return Markup(out)
+
+
 YT_RX = re.compile(r"(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/))([A-Za-z0-9_-]{11})")
 
 
@@ -236,9 +318,35 @@ def main():
         if eps:
             categories.append({**cat(c), "count": len(eps), "cover": eps[0]})
 
+    # --- articles (Substack cache written by tools/fetch_substack.py)
+    articles = []
+    sub_path = os.path.join(DATA, "data", "substack.json")
+    if os.path.exists(sub_path):
+        by_slug, by_num = {}, {}
+        for e in episodes:
+            m = re.search(r"/p/([^/?#]+)", e.get("substack") or "")
+            if m:
+                by_slug[m.group(1)] = e
+            by_num[e["episode"]] = e
+        for a in json.load(open(sub_path))["posts"]:
+            a = dict(a)
+            a["url"] = f"/articoli/{a['slug']}/"
+            a["date"] = it_date(a.get("post_date"))
+            a["cover_img"] = image_record("articoli", a["slug"], a.get("cover_local"))
+            a["body"] = clean_body(a.get("body_html"), a.get("cover_image"))
+            a["excerpt"] = excerpt(a.get("subtitle") or a.get("description") or "")
+            m = re.match(r"\s*Ep\.?\s*(\d+)\s*:", a.get("title") or "")
+            ep = by_slug.get(a["slug"]) or (by_num.get(int(m.group(1))) if m else None)
+            a["episode"] = ep
+            if ep and not ep.get("article"):
+                ep["article"] = a
+            articles.append(a)
+        articles.sort(key=lambda a: a.get("post_date") or "", reverse=True)
+        print(f"  articles: {len(articles)}, {sum(1 for a in articles if a['episode'])} linked to an episode")
+
     # prune image derivatives no longer referenced
     keep, made = set(), 0
-    for rec in [e["image_img"] for e in episodes] + [p["photo_img"] for p in people if p["episodes"]]:
+    for rec in [e["image_img"] for e in episodes] + [p["photo_img"] for p in people if p["episodes"]] + [a["cover_img"] for a in articles]:
         if rec:
             keep |= rec["files"]
             made += rec["made"]
@@ -256,7 +364,7 @@ def main():
     env.filters.update(paragraphs=paragraphs, excerpt=excerpt)
     env.globals.update(img=img, link_label=link_label)
     base = SITE.get("base_url", "").rstrip("/")
-    ctx = dict(site=SITE, base=base, episodes=episodes, categories=categories,
+    ctx = dict(site=SITE, base=base, episodes=episodes, categories=categories, articles=articles,
                project=data["project"], presentation=presentation, year=date.today().year,
                latest=[e for e in episodes if e["episode"] > 0][:6])
 
@@ -271,6 +379,14 @@ def main():
     for i, e in enumerate(episodes):
         render("episode.html", f"episodi/{e['episode']}/index.html", page="episodes", ep=e,
                newer=episodes[i - 1] if i else None, older=episodes[i + 1] if i + 1 < len(episodes) else None)
+    if articles:
+        render("articles.html", "articoli/index.html", page="articles")
+        for a in articles:
+            render("article.html", f"articoli/{a['slug']}/index.html", page="articles", a=a)
+    for d in os.listdir(os.path.join(DOCS, "articoli")) if os.path.isdir(os.path.join(DOCS, "articoli")) else []:
+        full = os.path.join(DOCS, "articoli", d)
+        if os.path.isdir(full) and d not in {a["slug"] for a in articles}:
+            shutil.rmtree(full)
     render("about.html", "progetto/index.html", page="about")
     render("404.html", "404.html", page="404")
     for d in os.listdir(os.path.join(DOCS, "episodi")):      # pages of episodes no longer published
@@ -287,13 +403,13 @@ def main():
         open(cname, "w").write(SITE["domain"].strip() + "\n")
     elif os.path.exists(cname):
         os.remove(cname)
-    urls = ["/", "/episodi/", "/progetto/"] + [e["url"] for e in episodes]
+    urls = ["/", "/episodi/", "/progetto/"] + [e["url"] for e in episodes] + (["/articoli/"] if articles else []) + [a["url"] for a in articles]
     with open(os.path.join(DOCS, "sitemap.xml"), "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                 + "".join(f"  <url><loc>{base}{u}</loc></url>\n" for u in urls) + "</urlset>\n")
     with open(os.path.join(DOCS, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\nSitemap: {base}/sitemap.xml\n")
-    print(f"build: {len(episodes)} episodes, {len(categories)} categories -> {DOCS}")
+    print(f"build: {len(episodes)} episodes, {len(categories)} categories, {len(articles)} articles -> {DOCS}")
 
 
 if __name__ == "__main__":

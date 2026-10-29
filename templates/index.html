@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% from "_card.html" import episode_card %}
+{% from "_card.html" import episode_card, article_card %}
 {% block content %}
 <section class="hero">
   <div class="hero-in">
     <h1 class="hero-logo"><img src="/logo-wide.webp" width="1200" height="331" alt="{{ site.site_name }}" loading="eager" fetchpriority="high" decoding="async"></h1>
     <p class="hero-tag">{{ site.tagline }}</p>
-    <p class="hero-sub">Dal 2024, un episodio alla settimana: la persona, la professione, la scena a Torino. Su YouTube, Spotify, LinkedIn, Substack e Instagram.</p>
+    <p class="hero-sub">Dal 2024, un episodio alla settimana: la persona, la professione, la scena a Torino. Su Instagram, YouTube, Spotify, Substack e LinkedIn.</p>
+    <p class="hero-cta"><a class="btn-light" href="{{ site.instagram }}" rel="me noopener">Seguici su Instagram ↗</a></p>
     <div class="hero-nums"><a href="/episodi/"><b>{{ episodes|length }}</b> episodi</a><a href="/episodi/"><b>{{ categories|length }}</b> categorie</a></div>
   </div>
 </section>
@@ -29,6 +30,14 @@
   </div>
 </section>
 
+{% if articles %}
+<section class="section">
+  <div class="section-head"><h2>Ultimi articoli</h2><a class="more" href="/articoli/">Tutti gli articoli</a></div>
+  <div class="agrid">
+    {% for a in articles[:3] %}{{ article_card(a) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
 
 <section class="section about-teaser">
   <div class="about-grid">

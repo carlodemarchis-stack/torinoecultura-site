@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_card.html" import episode_card %}
+{% block title %}{{ a.title }} — {{ site.site_name }}{% endblock %}
+{% block desc %}{{ a.excerpt or a.title }}{% endblock %}
+{% block canon %}{{ base }}{{ a.url }}{% endblock %}
+{% block ogtype %}article{% endblock %}
+{% block og %}{% if a.cover_img %}<meta property="og:image" content="{{ base }}{{ a.cover_img.og }}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="{{ (1200 * a.cover_img.h / a.cover_img.w)|round|int }}">{% else %}{{ super() }}{% endif %}<meta property="article:published_time" content="{{ a.post_date }}">{% endblock %}
+{% block content %}
+<article class="episode article">
+  <header class="ehead">
+    <div class="meta"><a href="/articoli/">Articoli</a><span class="num">{{ a.date }}</span>{% if a.episode %}<a class="cat" href="{{ a.episode.url }}">Ep. {{ a.episode.episode }}</a>{% endif %}</div>
+    <h1 class="h-title">{{ a.title }}</h1>
+    {% if a.subtitle %}<p class="subtitle">{{ a.subtitle }}</p>{% endif %}
+  </header>
+  {% if a.cover_img %}
+  <figure class="ehero"><a href="{{ a.cover_img.url }}" data-lightbox="cover">{{ img(a.cover_img, '100vw', a.title, eager=True, full=True) }}</a></figure>
+  {% endif %}
+  <div class="ebody">
+    <div class="einfo">
+      <div class="statement article-body">{{ a.body }}</div>
+      <div class="elinks">
+        <a class="btn" href="{{ a.canonical_url }}" rel="noopener">Leggi su Substack ↗</a>
+        {% if a.episode %}<a class="btn ghost" href="{{ a.episode.url }}">Vai all'episodio</a>{% endif %}
+      </div>
+    </div>
+    <aside class="eside">
+      {% if a.episode %}
+      <h2 class="side-h">Episodio</h2>
+      <div class="egrid side">{{ episode_card(a.episode, '(max-width:860px) 100vw, 320px') }}</div>
+      {% endif %}
+      <h2 class="side-h">Newsletter</h2>
+      <p class="side-p small">Gli articoli escono su Substack. <a href="{{ site.substack }}" rel="me noopener">Iscriviti ↗</a></p>
+    </aside>
+  </div>
+</article>
+{% endblock %}

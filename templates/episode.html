@@ -35,6 +35,7 @@
         {% if ep.yt_id %}<a class="btn" href="{{ ep.youtube }}" rel="noopener">YouTube ↗</a>{% endif %}
         {% if ep.spotify %}<a class="btn" href="{{ ep.spotify }}" rel="noopener">Spotify ↗</a>{% endif %}
         {% if ep.linkedin %}<a class="btn ghost" href="{{ ep.linkedin }}" rel="noopener">LinkedIn ↗</a>{% endif %}
+        {% if ep.article %}<a class="btn ghost" href="{{ ep.article.url }}">Articolo</a>{% endif %}
         {% if ep.substack %}<a class="btn ghost" href="{{ ep.substack }}" rel="noopener">Substack ↗</a>{% endif %}
         {% for r in ep.reels %}<a class="btn ghost" href="{{ r }}" rel="noopener">Reel {{ loop.index }} ↗</a>{% endfor %}
       </div>

@@ -12,7 +12,8 @@ this repo only reads them and renders pages.
 torinoecultura-site/
 ├── build.py        renders docs/ with jinja2 + resizes images with Pillow into WebP
 ├── site.json       settings: data folder, base URL / domain, Umami id, social links, category labels
-├── templates/      base, index, episodes, episode, about, 404, _card (jinja2)
+├── tools/fetch_substack.py   refreshes the local cache of the Substack articles (see below)
+├── templates/      base, index, episodes, episode, articles, article, about, 404, _card (jinja2)
 ├── static/         style.css, site.js, logo, icons, og-default.jpg → copied into docs/
 └── docs/           the generated site — what GitHub Pages serves
 ```
@@ -37,8 +38,28 @@ git add -A && git commit -m "content: …" && git push
 cached: only new or changed sources are re-encoded) plus a 1200 px JPEG for
 `og:image`, since LinkedIn and X do not read WebP. `--no-images` skips that step for
 a quick template-only rebuild. Pages: `/`, `/episodi/` (category filter in the URL
-hash, restored on reload), `/episodi/<n>/`, `/progetto/`, `404.html`, plus
-`sitemap.xml`, `robots.txt`, `.nojekyll` and `CNAME`.
+hash, restored on reload), `/episodi/<n>/`, `/articoli/`, `/articoli/<slug>/`,
+`/progetto/`, `404.html`, plus `sitemap.xml`, `robots.txt`, `.nojekyll` and `CNAME`.
+
+## Articles (Substack)
+
+The "Articoli" section mirrors every free post of
+https://torinoecultura.substack.com. The posts are cached in the data folder
+(`<data_dir>/data/substack.json` + cover images in `data/photos/substack/`) so the
+build is reproducible offline; refresh the cache when a new post is out:
+
+```bash
+python3 tools/fetch_substack.py
+```
+
+It pages the archive API (`/api/v1/archive?offset=…`, the RSS feed only has the
+latest ~20) and fetches each new post's full `body_html` from `/api/v1/posts/<slug>`,
+one request per second with back-off on 429; bodies already cached are kept
+(`--all` refetches everything). Each article page shows cover, date, title,
+subtitle, the full text and a "Leggi su Substack" link. An article is linked to an
+episode when the episode's `substack` field points at it or its title starts with
+the same `Ep. N:`; the episode page then gets an "Articolo" button and the article
+page shows the episode card.
 
 ## What the pages show
 

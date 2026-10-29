@@ -166,3 +166,28 @@ p a{text-decoration:underline;text-underline-offset:3px}
 .lb-prev{left:4px;top:50%;transform:translateY(-50%)}
 .lb-next{right:4px;top:50%;transform:translateY(-50%)}
 @media (max-width:640px){.lb-prev,.lb-next{font-size:34px;padding:12px 10px}}
+
+/* articles (Substack) */
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:36px 24px}
+.acard-img{display:block;background:#000;overflow:hidden}
+.acard-img img{width:100%;aspect-ratio:16/9;object-fit:cover;background:#111;transition:opacity .2s}
+.acard:hover .acard-img img{opacity:.85}
+.acard-text{padding-top:12px}
+.acard .meta{margin-bottom:8px}
+.acard h3{font-weight:700;letter-spacing:-.03em;font-size:20px;line-height:1.15;margin:0 0 6px;text-wrap:balance}
+.acard h3 a:hover{text-decoration:underline;text-underline-offset:3px}
+.acard .guests{margin:0;font-size:14px;color:#333}
+.subtitle{font-size:clamp(17px,1.8vw,22px);color:#333;margin:14px 0 0;max-width:60ch}
+.article .ehero img{aspect-ratio:auto;max-height:80vh;object-fit:contain}
+.article-body p:first-child:not(:only-child){font-size:inherit;line-height:inherit;letter-spacing:0;font-weight:400}
+.article-body h2,.article-body h3{font-weight:700;letter-spacing:-.03em;line-height:1.15;margin:1.6em 0 .5em}
+.article-body h2{font-size:clamp(22px,2.4vw,30px)}
+.article-body h3{font-size:clamp(19px,2vw,24px)}
+.article-body hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+.article-body figure{margin:1.6em 0}
+.article-body img{width:100%;height:auto;background:var(--soft)}
+.article-body figcaption{font-size:13px;color:var(--mute);margin-top:8px}
+.article-body a{text-decoration:underline;text-underline-offset:3px}
+.article-body blockquote{margin:1.4em 0;padding-left:18px;border-left:3px solid #000;font-style:italic}
+.article-body ul,.article-body ol{padding-left:1.3em}
+.hero-cta{margin:0 0 28px}

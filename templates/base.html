@@ -21,7 +21,7 @@
 <link rel="icon" href="/icon-512.png" sizes="512x512" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="theme-color" content="#000000">
-<link rel="stylesheet" href="/style.css?v=1">
+<link rel="stylesheet" href="/style.css?v=2">
 {% if site.umami_website_id %}
 <!-- Umami -->
 <script>if((location.search+location.hash).indexOf('noumami')>-1){try{localStorage.setItem('umami.disabled','1')}catch(e){}}</script>
@@ -35,6 +35,7 @@
   <a class="brand" href="/" aria-label="{{ site.site_name }} — home"><img src="/logo-wide.webp" width="1200" height="331" alt="{{ site.site_name }}" loading="eager" decoding="async"></a>
   <nav class="nav" aria-label="Principale">
     <a href="/episodi/" {% if page == 'episodes' %}aria-current="page"{% endif %}>Episodi</a>
+    {% if articles %}<a href="/articoli/" {% if page == 'articles' %}aria-current="page"{% endif %}>Articoli</a>{% endif %}
     <a href="/progetto/" {% if page == 'about' %}aria-current="page"{% endif %}>Il progetto</a>
   </nav>
 </header>
@@ -45,9 +46,9 @@
   <div class="foot-grid">
     <div class="foot-brand"><img src="/logo-wide.webp" width="1200" height="331" alt="{{ site.site_name }}" loading="lazy"><span class="tag">{{ site.tagline }}</span></div>
     <div class="foot-links">
+      {% if site.instagram %}<a href="{{ site.instagram }}" rel="me noopener">Instagram</a>{% endif %}
       {% if site.youtube %}<a href="{{ site.youtube }}" rel="me noopener">YouTube</a>{% endif %}
       {% if site.spotify %}<a href="{{ site.spotify }}" rel="me noopener">Spotify</a>{% endif %}
-      {% if site.instagram %}<a href="{{ site.instagram }}" rel="me noopener">Instagram</a>{% endif %}
       {% if site.substack %}<a href="{{ site.substack }}" rel="me noopener">Substack</a>{% endif %}
       {% if site.linkedin %}<a href="{{ site.linkedin }}" rel="me noopener">LinkedIn</a>{% endif %}
     </div>
