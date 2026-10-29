@@ -311,12 +311,13 @@ def main():
         print(f"  note: {len(unlinked)} guests have no person record (no photo/bio in the episode page): "
               + ", ".join(f"ep {n} {g}" for n, g in unlinked[:6]) + (" …" if len(unlinked) > 6 else ""))
 
-    # --- categories (reference order, only those with episodes)
+    # --- categories: only those with episodes, most episodes first (ties keep the reference order)
     categories = []
     for c in cat_order:
         eps = [e for e in episodes if e.get("category") == c]
         if eps:
             categories.append({**cat(c), "count": len(eps), "cover": eps[0]})
+    categories.sort(key=lambda c: -c["count"])
 
     # --- articles (Substack cache written by tools/fetch_substack.py)
     articles = []
