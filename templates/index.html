@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_card.html" import episode_card, article_card %}
+{% import "_icons.html" as ico %}
 {% block content %}
 {% set top = latest[0] %}
 <section class="hero">
@@ -7,7 +8,10 @@
     <div class="hero-text">
       <h1 class="hero-logo"><img src="/logo-wide.webp" width="1200" height="331" alt="{{ site.site_name }}" loading="eager" fetchpriority="high" decoding="async"></h1>
       <p class="hero-tag">{{ site.tagline }}</p>
-      <p class="hero-sub">Dal 2024, un episodio alla settimana: la persona, la professione, la scena a Torino. Su Instagram, YouTube, Spotify, Substack e LinkedIn.</p>
+      <p class="hero-sub">Dal 2024, un episodio alla settimana: la persona, la professione, la scena a Torino.</p>
+      <div class="hero-social" aria-label="Dove trovarci">
+        {% for key, label in [('instagram','Instagram'),('youtube','YouTube'),('spotify','Spotify'),('substack','Substack'),('linkedin','LinkedIn')] %}{% if site[key] %}<a href="{{ site[key] }}" rel="me noopener" aria-label="{{ label }}" title="{{ label }}">{{ ico[key]() }}</a>{% endif %}{% endfor %}
+      </div>
       <p class="hero-cta"><a class="btn-light" href="{{ site.instagram }}" rel="me noopener">Seguici su Instagram ↗</a></p>
       <div class="hero-nums"><a href="/episodi/"><b>{{ episodes|length }}</b> episodi</a><a href="/episodi/"><b>{{ categories|length }}</b> categorie</a>{% if articles %}<a href="/articoli/"><b>{{ articles|length }}</b> articoli</a>{% endif %}</div>
     </div>
