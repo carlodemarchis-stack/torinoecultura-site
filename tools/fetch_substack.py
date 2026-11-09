@@ -5,7 +5,7 @@
   python3 tools/fetch_substack.py --all    refetch every body
 
 Writes <data_dir>/data/substack.json and <data_dir>/data/photos/substack/<slug>.<ext>  (data_dir from site.json).
-The public RSS feed only carries the latest ~20 posts; the archive API is paged by offset and each post's
+The public RSS feed only carries the latest ~20 posts; the archive API is paged by cursor and each post's
 body_html comes from /api/v1/posts/<slug>. Only free ("everyone") posts are kept.
 """
 import json
@@ -49,13 +49,16 @@ def main():
     old = {}
     if os.path.exists(OUT):
         old = {p["slug"]: p for p in json.load(open(OUT))["posts"]}
-    posts, offset = [], 0
-    while True:
-        page = get(f"{PUB}/api/v1/archive?sort=new&search=&offset={offset}&limit=12")
-        if not page:
+    posts, cursor = [], ""
+    while True:   # cursor paging (Substack, Nov 2026): {"posts": [...], "nextCursor": "..."}; older API returned a bare list
+        page = get(f"{PUB}/api/v1/archive?sort=new&limit=12" + (f"&cursor={cursor}" if cursor else ""))
+        batch = page.get("posts", []) if isinstance(page, dict) else page
+        if not batch:
             break
-        posts.extend(page)
-        offset += len(page)
+        posts.extend(batch)
+        cursor = page.get("nextCursor") if isinstance(page, dict) else None
+        if not cursor:
+            break
         time.sleep(0.3)
     print(f"archive: {len(posts)} posts")
     os.makedirs(PHOTOS, exist_ok=True)
